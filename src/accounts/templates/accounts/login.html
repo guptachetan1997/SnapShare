@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+	{% load static %}
+	<link href="{% static "accounts/css/signin.css" %}" rel="stylesheet">
+    <title>Login</title>
+  </head>
+  <body>
+		{% if messages %}
+		<div class="messages container col-sm-4 text-center">
+			{% for message in messages %}
+			<div class="alert alert-danger alert-dismissible fade show" role="alert">
+					{{ message }}
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+					</button>
+			</div>
+			{% endfor %}
+		</div>
+		{% endif %}
+    <div class="container ">
+		<div class="cardmkm">
+		<form action="/accounts/login/" method="POST" class="form-signin">
+			{% csrf_token %}
+		  <h2 class="form-signin-heading text-center">SnapShare</h2>
+		  <label for="username" class="sr-only">Username</label>
+		  <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+		  <label for="password" class="sr-only">Password</label>
+		  <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+		  <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+		  <p class="text-center">New user? <a href="/accounts/register/">Register</a></p>
+		</form>
+	</div>
+	  </div> <!-- /container -->
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+  </body>
+</html>
