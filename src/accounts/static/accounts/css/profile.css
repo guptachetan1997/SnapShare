@@ -1,0 +1,16 @@
+ .search-form
+{
+	width: 100%; 
+	justify-content:center;
+}
+
+.profile-image
+{
+	height: 140px;
+	width: 140px;
+}
+
+.jumbotron-container
+{
+	padding-top: 10px;
+}

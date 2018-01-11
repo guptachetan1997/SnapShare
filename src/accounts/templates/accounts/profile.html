@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+	{% load static %}
+	<link rel="stylesheet" href="{% static "accounts/css/profile.css" %}">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="{% static "accounts/js/profile.js" %}"></script>
+
+	<title>{{user.username}}</title>
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<a class="navbar-brand" href="#">
+			<img src="/media/logo.png" width="30" height="30" alt="" class="d-inline-block align-top">
+			SnapShare
+		</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<form class="form-inline my-2 my-lg-0 search-form">
+				<input class="form-control form-control-sm text-center" type="search" placeholder="Search" aria-label="Search" style="width:50%;">
+			</form>
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item">
+					<a class="nav-link" href="#">Related</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">Upload</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/accounts/profile/{{request.user.username}}">Profile</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/accounts/logout/">Logout</a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+	<div class="container">
+			{% if messages %}
+			<div class="messages container col-sm-4 text-center">
+				{% for message in messages %}
+				<div class="alert alert-danger alert-dismissible fade show" role="alert">
+						{{ message }}
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+						</button>
+				</div>
+				{% endfor %}
+			</div>
+			{% endif %}
+	</div>
+	<div class="container jumbotron-container">
+		<div class="jumbotron">
+			<div class="container">
+				<div class="row justify-content-md-center">
+				<div class="col-sm-2">
+					<img src="{{user.profile.profile_picture.url}}" class="profile-image rounded-circle float-left" alt="Responsive image">
+				</div>
+				<div class="col-sm-6">
+					<div class="row">
+						<div class="col">
+							<h3 class="display-6">@{{user.username}}</h3>
+						</div>
+						<div class="col">
+							{% if user == request.user%}
+							<button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#profileUpdateModal">Edit Profile</button>
+							{% else%}
+							<form id="follow-form">
+									{% csrf_token %}
+									<input type="hidden" name="to_user" value={{user}}>
+									{% if following_flag %}
+										<button id="follow-toggle" class="btn btn-secondary btn-sm">Following</button>
+									{% else %}
+										<button id="follow-toggle" class="btn btn-primary btn-sm">Follow</button>
+									{% endif %}
+							</form>
+							{% endif %}
+						</div>
+					</div>
+					<span class="badge badge-light">{{user.profile.follower_count}} followers</span>
+					<span class="badge badge-light">{{user.profile.connection_count}} following</span>
+					<p class="text-justify"><strong>{{user.profile.get_full_name}}</strong> {{user.profile.bio}}</p>
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="profileUpdateModal" tabindex="-1" role="dialog" aria-labelledby="profileUpdateModalTitle" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <h5 class="modal-title" id="profileUpdateModalTitle">Edit Profile Details</h5>
+		  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		  </button>
+		</div>
+		<div class="modal-body">
+			<form action="/accounts/profile/{{request.user.username}}/update/" method="POST" enctype="multipart/form-data">
+				{% csrf_token %}
+				<div class="form-group">
+					<label for="first_name">First Name</label>
+					<input class="form-control" type="text" id="first_name" name="first_name" placeholder="{{user.first_name}}">
+			</div>
+			<div class="form-group">
+					<label for="last_name">Last Name</label>
+				<input class="form-control" type="text" id="last_name" name="last_name" placeholder="{{user.last_name}}">
+			</div>
+			<div class="form-group">
+					<label for="bio">Bio</label>
+				<textarea class="form-control" type="text" id="bio" name="bio" placeholder="{{user.profile.bio}}"></textarea>
+			</div>
+			<div class="form-group">
+					<label for="profile-picture-change">Profile Picture</label>
+					<input name="profile_picture" type="file" class="form-control-file" id="profile-picture-change">
+				  </div>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				<button class="btn btn-primary" type="submit">Update</button>
+			</form>
+		</div>
+	  </div>
+	</div>
+  </div>
+</div>
+</body>
+</html>
