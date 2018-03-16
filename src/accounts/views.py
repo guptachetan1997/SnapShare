@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from accounts.forms import SignUpForm, ProfileUpdateForm, ProfilePictureUpdateForm
 from django.contrib import messages
 from accounts.models import Profile
+from posts.models import Post
 
 User = get_user_model()
 
@@ -72,14 +73,16 @@ class Profile(View):
 	def get(self, request, username, *args, **kwargs):
 		try:
 			user = User.objects.get(username=username)
-			if user and user!=request.user:
+			if user:
+				posts = user.profile.get_posts()
 				following_flag = request.user.profile.check_connection(user)
 			else:
 				following_flag = None
+				posts = None
 		except Exception as e:
 			print(e)
 			user = None
-		return render(request, self.template_name, {"user" : user, "following_flag" : following_flag})
+		return render(request, self.template_name, {"user" : user, "following_flag" : following_flag, "posts" : posts})
 
 
 class ProfileUpdate(View):
@@ -122,3 +125,8 @@ class FollowToggle(View):
 @login_required
 def temp_home(request):
 	return redirect("/accounts/profile/{}".format(request.user.username))
+
+
+@login_required
+def four_o_four(request):
+	return render(request, "SnapShare/404.html")

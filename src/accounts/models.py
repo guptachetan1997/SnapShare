@@ -5,6 +5,7 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
+from posts.models import Post
 
 def upload_location(instance, filename):
 	u = User.objects.get(id = instance.user_id)
@@ -50,6 +51,10 @@ class Profile(models.Model):
 		followers = Connection.objects.filter(to_user=self.user)
 		return followers
 
+	def get_posts(self):
+		posts = Post.objects.filter(user = self.user).order_by("-timestamp")
+		return posts
+
 	@property
 	def connection_count(self):
 		return self.get_connections().count()
@@ -57,6 +62,10 @@ class Profile(models.Model):
 	@property
 	def follower_count(self):
 		return self.get_followers().count()
+
+	@property
+	def post_count(self):
+		return self.get_posts().count()
 
 
 class Connection(models.Model):

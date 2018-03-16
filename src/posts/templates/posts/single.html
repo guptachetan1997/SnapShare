@@ -1,0 +1,47 @@
+{% extends "SnapShare/base.html" %}
+
+{% block title %}
+SnapShare
+{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col">
+		<div class="card text-center">
+			<div class="card-header">
+				<form id="like-form">
+					{% csrf_token %}
+					<input type="hidden" name="post_uuid" value={{post.uuid}}>
+					{% if like_flag %}
+					<button id="like-toggle" class="btn btn-secondary btn-sm">Liked <span class="badge badge-light">{{post.likes_count}}</span></button>
+					{% else %}
+					<button id="like-toggle" class="btn btn-primary btn-sm">Like <span class="badge badge-light">{{post.likes_count}}</span></button>
+					
+					{% endif %}
+				</form>
+			</div>
+			<img class="card-img-top" src="{{post.image.url}}" >
+			<div class="card-body">
+				<blockquote class="blockquote mb-0">
+					<p>{{post.caption}}</p>
+				</blockquote>
+			</div>
+			<div class="card-footer text-muted">
+				{{post.timestamp | timesince}} ago
+			</div>
+		</div>
+	</div>
+	<div class="col">
+		<div class="card">
+			<div class="card-header">
+				Comments
+			</div>
+			<ul class="list-group list-group-flush">
+				{% for comment in comments %}
+				<li class="list-group-item">{{comment.text}}</li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+</div>
+{% endblock %}
