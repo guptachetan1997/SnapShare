@@ -17,12 +17,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from accounts.views import temp_home, four_o_four
+from accounts.views import four_o_four
+from posts.views import HomeView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('posts/', include('posts.urls')),
     path('404/', four_o_four),
-    path('', temp_home),
+    path('', HomeView.as_view(), name="home_url"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

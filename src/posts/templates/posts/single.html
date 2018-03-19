@@ -36,12 +36,24 @@ SnapShare
 			<div class="card-header">
 				Comments
 			</div>
+			<div class="card-body">
+			<form class="form-inline text-center" method="POST" action="/posts/single/comment/">
+					{% csrf_token %}
+					<input type="text" class="form-control mb-2 mr-sm-2" id="comment_text" name="comment_text">
+					<button type="submit" class="btn btn-primary mb-2">Post</button>
+					<input type="hidden" name="post_uuid" value="{{post.uuid}}">
+			</form>
 			<ul class="list-group list-group-flush">
 				{% for comment in comments %}
-				<li class="list-group-item">{{comment.text}}</li>
+				<li class="list-group-item">
+					<a href="/accounts/profile/{{comment.user.username}}">{{comment.user.username}}</a>
+					{{comment.text}}
+					<small>{{comment.timestamp | timesince}}</small>
+				</li>
 				{% endfor %}
 			</ul>
 		</div>
+	</div>
 	</div>
 </div>
 {% endblock %}

@@ -6,8 +6,9 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_protect
-from posts.models import Post
+from posts.models import Post, Comment
 from posts.forms import PostForm
+from accounts.models import Connection
 
 User = get_user_model()
 
@@ -45,7 +46,8 @@ class SinglePost(View):
 		try:
 			post_obj = Post.objects.get(uuid = uuid)
 			like_flag = post_obj.check_like(request.user)
-			return render(request, self.template_name, {"post" : post_obj, "like_flag" : like_flag})
+			comments = Comment.objects.filter(post=post_obj).order_by("-timestamp")
+			return render(request, self.template_name, {"post" : post_obj, "like_flag" : like_flag, "comments" : comments})
 		except:
 			return redirect("/404/")
 
@@ -65,3 +67,29 @@ class LikeToggle(View):
 		except Exception as e:
 			print(e)
 			return redirect("/404/")
+
+
+class HomeView(View):
+	template_name = "posts/home.html"
+
+	@method_decorator(login_required)
+	def get(self, request, *args, **kwargs):
+		connections = Connection.objects.filter(from_user = request.user)
+		posts = []
+		for connection in connections:
+			posts += Post.objects.filter(user=connection.to_user)
+		return render(request, self.template_name, {"posts" : posts})
+
+
+class AddComment(View):
+
+	@method_decorator(login_required, csrf_protect)
+	def post(self, request, *args, **kwargs):
+		post_uuid = request.POST.get("post_uuid")
+		text = request.POST.get("comment_text")
+		try:
+			post_obj = Post.objects.get(uuid = post_uuid)
+			comment_create_flag = post_obj.add_comment(request.user, text)
+			return redirect("/posts/single/{}/".format(post_obj.uuid))
+		except:
+			return redirect("/posts/single/{}/".format(post_obj.uuid))
