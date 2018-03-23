@@ -8,7 +8,9 @@ Instagram clone with automatic image tagging.
 
 To run
 
+```
 $ redis-server
 $ python3 server/src/manage.py runserver
 $ python3 tagger/src/model_server.py
 $ python3 tagger/src/model_process.py
+```
