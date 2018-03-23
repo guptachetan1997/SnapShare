@@ -23,7 +23,12 @@ SnapShare
 			<img class="card-img-top" src="{{post.image.url}}" >
 			<div class="card-body">
 				<blockquote class="blockquote mb-0">
-					<p>{{post.caption}}</p>
+					{% if post.caption %}
+						<p>{{post.caption}}</p>
+					{% endif %}
+					{% for tag in tags %}
+						<a href="#" class="card-link">#{{tag}}</a>
+					{% endfor %}
 				</blockquote>
 			</div>
 			<div class="card-footer text-muted">

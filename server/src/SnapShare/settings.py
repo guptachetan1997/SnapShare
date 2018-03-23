@@ -25,7 +25,7 @@ SECRET_KEY = 'xay_9ggl4!ki(@s6uclc1+lxb9871e$o7wklbqcxw#8*hn*@y7'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -124,3 +124,5 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media_cdn")
+
+TAGGER_SERVICE_URL = "http://localhost:5000/tag"

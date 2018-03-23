@@ -15,6 +15,7 @@ class Post(models.Model):
 	image = models.ImageField(upload_to=upload_location)
 	timestamp = models.DateTimeField(auto_now_add=True)
 	uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+	tags = models.CharField(max_length=500, blank=True, null=True)
 
 	def check_like(self, user):
 		try:
