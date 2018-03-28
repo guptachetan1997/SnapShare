@@ -109,3 +109,12 @@ class AddComment(View):
 			return redirect("/posts/single/{}/".format(post_obj.uuid))
 		except:
 			return redirect("/posts/single/{}/".format(post_obj.uuid))
+
+
+class SingleTag(View):
+	template_name = "posts/single_tag.html"
+
+	@method_decorator(login_required)
+	def get(self, request, tag, *args, **kwargs):
+		posts = Post.objects.filter(tags__icontains = tag)
+		return render(request, self.template_name, {"tag" : tag, "posts" : posts})

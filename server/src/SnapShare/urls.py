@@ -19,11 +19,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 from accounts.views import four_o_four
 from posts.views import HomeView
+from graphene_django.views import GraphQLView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('posts/', include('posts.urls')),
     path('404/', four_o_four),
+    path('graphql/', GraphQLView.as_view(graphiql=True)),
     path('', HomeView.as_view(), name="home_url"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

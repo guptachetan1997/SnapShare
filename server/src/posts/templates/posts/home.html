@@ -14,10 +14,15 @@
 					<a href="/accounts/profile/{{post.user.username}}/">{{post.user.username}}</a>
 				</div>
 				  <img class="card-img" src="{{post.image.url}}" alt="Card image cap">
-				  <div class="card-body">
+				  <div class="card-body text-center">
 					<p class="card-text">{{post.caption}}
 						<small class="text-muted">{{post.timestamp | timesince}} ago</small>
 					</p>
+					<div class="col">
+						{% for tag in post.get_tags %}
+							<a href="/posts/tags/{{tag}}" class="card-link">#{{tag}}</a>
+						{% endfor %}
+					</div>
 					<span class="badge badge-danger card-link">{{post.likes_count}} Likes</span>
 					<span class="badge badge-success card-link">{{post.comments_count}} Comments</span>
 					<a href="/posts/single/{{post.uuid}}" class="card-link">View</a>

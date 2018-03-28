@@ -10,7 +10,7 @@ def upload_location(instance, filename):
 
 
 class Post(models.Model):
-	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
 	caption = models.CharField(max_length = 100, blank=True, null=True)
 	image = models.ImageField(upload_to=upload_location)
 	timestamp = models.DateTimeField(auto_now_add=True)
@@ -23,6 +23,10 @@ class Post(models.Model):
 			return 1
 		except:
 			return 0
+	
+	@property
+	def get_tags(self):
+		return self.tags.split(",")
 	
 	@property
 	def comments_count(self):
@@ -65,8 +69,8 @@ class Post(models.Model):
 
 class Like(models.Model):
 	timestamp = models.DateTimeField(auto_now=True)
-	post = models.ForeignKey(Post, on_delete=models.CASCADE)
-	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="liked_post")
+	user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="from_user")
 
 
 class Comment(models.Model):
