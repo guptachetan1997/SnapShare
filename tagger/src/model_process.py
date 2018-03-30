@@ -11,7 +11,7 @@ db = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=se
 
 def tag_process():
 	print("* Loading model .....")
-	model = VGG16(weights="imagenet")
+	model = VGG16(weights="vgg16_weights_tf_dim_ordering_tf_kernels.h5")
 	print("* Model loaded")
 
 	while True:

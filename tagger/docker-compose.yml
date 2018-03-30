@@ -1,0 +1,10 @@
+version: '3'
+services:
+  model_server:
+    build: Dockerfile-model_server
+    ports:
+     - "5000:5000"
+  model_process:
+    build: Dockerfile-model_process
+  redis:
+    image: "redis:alpine"

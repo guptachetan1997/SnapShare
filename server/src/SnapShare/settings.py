@@ -126,7 +126,7 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media_cdn")
 
-TAGGER_SERVICE_URL = "http://localhost:5000/tag"
+TAGGER_SERVICE_URL = "http://172.17.0.1:5000/tag"
 
 GRAPHENE = {
     "SCHEMA" : "SnapShare.schema.schema"

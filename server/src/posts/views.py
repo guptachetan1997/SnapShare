@@ -37,12 +37,18 @@ class Upload(View):
 			image_path = "{}/{}".format(settings.MEDIA_ROOT,post_obj.image)
 			image = open(image_path, "rb").read()
 			payload = {"image": image}
-			r = requests.post(settings.TAGGER_SERVICE_URL, files=payload).json()
-			if r["success"]:
-				post_obj.tags = ",".join(r["tags"])
-				post_obj.save()
-			else:
-				print("Error")
+			try:
+				r = requests.post(settings.TAGGER_SERVICE_URL, files=payload).json()
+				if r["success"]:
+					post_obj.tags = ",".join(r["tags"])
+					post_obj.save()
+				else:
+					post_obj.tags = ""
+					post_obj.save()
+					print("Error")
+			except:
+				messages.add_message(request, messages.ERROR, "Network failure.")
+				post_obj.delete()
 			return redirect("/accounts/profile/{}".format(request.user.username))
 		else:
 			errors = form.errors.get_json_data()
