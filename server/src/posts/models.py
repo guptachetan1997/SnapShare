@@ -15,7 +15,6 @@ class Post(models.Model):
 	image = models.ImageField(upload_to=upload_location)
 	timestamp = models.DateTimeField(auto_now_add=True)
 	uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-	tags = models.CharField(max_length=500, blank=True, null=True)
 
 	def check_like(self, user):
 		try:
@@ -26,7 +25,8 @@ class Post(models.Model):
 	
 	@property
 	def get_tags(self):
-		return self.tags.split(",")
+		tags = PostTagBridge.objects.filter(post = self)
+		return [x.tag for x in tags]
 	
 	@property
 	def comments_count(self):
@@ -61,10 +61,43 @@ class Post(models.Model):
 			except:
 				Like.objects.create(post=self, user=from_user_obj)
 				return {"status" : True, "like_flag" : True}
-
+	
+	def add_tag(self, tag_text):
+		try:
+			tag_obj = Tag.objects.get(text=tag_text)
+		except Tag.DoesNotExist:
+			tag_obj = Tag(text=tag_text)
+			tag_obj.save()
+		try:
+			post_tag_bridge_obj = PostTagBridge(tag=tag_obj, post=self)
+			post_tag_bridge_obj.save()
+			return True
+		except:
+			return False
 
 	def __str__(self):
 		return str("{}  [{}]".format(self.uuid, self.timestamp))
+
+
+class Tag(models.Model):
+	text = models.CharField(max_length=100)
+
+	@property
+	def count(self):
+		return PostTagBridge.objects.filter(tag=self).count()
+	
+	@property
+	def most_recent_post(self):
+		return PostTagBridge.objects.filter(tag=self).order_by("-created_on").first().post
+
+	def __str__(self):
+		return "{}".format(self.text)
+
+
+class PostTagBridge(models.Model):
+	created_on = models.DateTimeField(auto_now=True)
+	tag = models.ForeignKey(Tag, on_delete=models.CASCADE, related_name="tag_name")
+	post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="tagged_post")
 
 
 class Like(models.Model):

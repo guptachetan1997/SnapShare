@@ -1,0 +1,59 @@
+{% extends "SnapShare/base.html" %}
+
+{% block title %}
+SnapShare
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center">Search Results</h1>
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">People</div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for user in users %}
+                        <a href="/accounts/profile/{{user.username}}/" class="list-group-item list-group-item-action">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <img src="{{user.profile.profile_picture.url}}" class="search-page-image rounded-circle" alt="Responsive image">
+                                </div>
+                                <div class="col-md-8">
+                                    <p>
+                                        <h5>{{user.profile.get_full_name}}</h5>
+                                        <small>{{user.profile.bio}}</small>
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-header">Tags</div>
+                <div class="card-body">
+                    {% for tag in tags %}
+                    <a href="/posts/tags/{{tag}}" class="list-group-item list-group-item-action">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <img src="{{tag.most_recent_post.image.url}}" class="search-page-image rounded-circle" alt="Responsive image">
+                            </div>
+                            <div class="col-md-8">
+                                <p>
+                                    <h5>#{{tag}}</h5>
+                                    <small>{{tag.count}} public posts.</small>
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

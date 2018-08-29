@@ -6,7 +6,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_protect
-from posts.models import Post, Comment
+from django.db.models import Q
+from posts.models import Post, Comment, PostTagBridge, Tag, Like
 from posts.forms import PostForm
 from accounts.models import Connection
 from django.conf import settings
@@ -40,11 +41,10 @@ class Upload(View):
 			try:
 				r = requests.post(settings.TAGGER_SERVICE_URL, files=payload).json()
 				if r["success"]:
-					post_obj.tags = ",".join(r["tags"])
+					for tag in r["tags"]:
+						post_obj.add_tag(tag)
 					post_obj.save()
 				else:
-					post_obj.tags = ""
-					post_obj.save()
 					print("Error")
 			except:
 				messages.add_message(request, messages.ERROR, "Network failure.")
@@ -68,7 +68,7 @@ class SinglePost(View):
 			post_obj = Post.objects.get(uuid = uuid)
 			like_flag = post_obj.check_like(request.user)
 			comments = Comment.objects.filter(post=post_obj).order_by("-timestamp")
-			tags = post_obj.tags.split(",")
+			tags = post_obj.get_tags
 			return render(request, self.template_name, {"post" : post_obj, "like_flag" : like_flag, "comments" : comments, "tags" : tags})
 		except Exception as e:
 			return redirect("/404/")
@@ -122,5 +122,32 @@ class SingleTag(View):
 
 	@method_decorator(login_required)
 	def get(self, request, tag, *args, **kwargs):
-		posts = Post.objects.filter(tags__icontains = tag)
+		bridges = PostTagBridge.objects.filter(tag__text__icontains = tag)
+		posts = [x.post for x in bridges]
 		return render(request, self.template_name, {"tag" : tag, "posts" : posts})
+
+class Search(View):
+	template_name = "posts/search_results.html"
+
+	@method_decorator(login_required)
+	def get(self, request, *args, **kwargs):
+		search_text = request.GET.get('search_text')
+		#searching for people
+		possible_users = User.objects.filter(Q(first_name__icontains=search_text) | Q(last_name__icontains=search_text))
+		#searching for tags
+		possible_tags = Tag.objects.filter(text__icontains = search_text)
+		return render(request, self.template_name, {"tags": possible_tags, "users": possible_users})
+
+class Related(View):
+	template_name = "posts/home.html"
+
+	@method_decorator(login_required)
+	def get(self, request, *args, **kwargs):
+		liked_posts = Like.objects.filter(user=request.user)
+		user_pool = list()
+		for liked_post in liked_posts:
+			user_pool.append(liked_post.post.user)
+		user_pool = list(set(user_pool))
+		posts_liked_by_user_pool = Like.objects.filter(user__in=user_pool)
+		posts = [x.post for x in posts_liked_by_user_pool]
+		return render(request, self.template_name, {"posts" : posts})
