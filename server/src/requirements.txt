@@ -7,7 +7,7 @@ graphql-core==2.0
 graphql-relay==0.4.5
 idna==2.6
 iso8601==0.1.12
-Pillow==5.0.0
+Pillow==8.3.2
 promise==2.1
 pytz==2017.3
 requests==2.18.4
